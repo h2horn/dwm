@@ -54,7 +54,7 @@
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
-#define TEXTW(X)                (drw_font_getexts_width(drw->font, X, strlen(X)) + drw->font->h)
+#define TEXTW(X)                (drw_font_getexts_width(drw, X, strlen(X)) + drw->font->h)
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
