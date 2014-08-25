@@ -70,7 +70,6 @@ drw_font_free(Display *dpy, Fnt *font) {
 Clr *
 drw_clr_create(Drw *drw, const char *clrname) {
 	Clr *clr;
-	Colormap cmap;
 	XftColor color;
 
 	if(!drw)
@@ -78,7 +77,6 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	clr = (Clr *)calloc(1, sizeof(Clr));
 	if(!clr)
 		return NULL;
-	cmap = DefaultColormap(drw->dpy, drw->screen);
 	if(!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen), clrname, &color))
 		die("error, cannot allocate color '%s'\n", clrname);
 	clr->xftc = color;
@@ -144,7 +142,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
 
-	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy,drw->screen));
+	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
 	XftDrawStringUtf8(d, invert ? &drw->scheme->bg->xftc : &drw->scheme->fg->xftc, drw->font->xfont, tx, ty, (XftChar8 *) buf, len);
 	XftDrawDestroy(d);
 }
