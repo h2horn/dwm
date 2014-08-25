@@ -43,14 +43,14 @@ drw_free(Drw *drw) {
 }
 
 Fnt *
-drw_font_create(Display *dpy, const char *fontname) {
+drw_font_create(Display *dpy, int screen, const char *fontname) {
 	Fnt *font;
 	font = (Fnt *)calloc(1, sizeof(Fnt));
 	if(!font)
 		return NULL;
 
-	if(!(font->xfont = XftFontOpenName(dpy,0,fontname)) // TODO: use correct screen number here.
-	&& !(font->xfont = XftFontOpenName(dpy,0,"fixed")))
+	if(!(font->xfont = XftFontOpenName(dpy,screen,fontname))
+	&& !(font->xfont = XftFontOpenName(dpy,screen,"fixed")))
 		die("error, cannot load font: '%s'\n", fontname);
 
 	font->ascent = font->xfont->ascent;

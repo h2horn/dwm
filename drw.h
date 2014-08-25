@@ -44,7 +44,7 @@ void drw_resize(Drw *drw, unsigned int w, unsigned int h);
 void drw_free(Drw *drw);
 
 /* Fnt abstraction */
-Fnt *drw_font_create(Display *dpy, const char *fontname);
+Fnt *drw_font_create(Display *dpy, int screen, const char *fontname);
 void drw_font_free(Display *dpy, Fnt *font);
 void drw_font_getexts(Drw *drw, const char *text, unsigned int len, Extnts *extnts);
 unsigned int drw_font_getexts_width(Drw *drw, const char *text, unsigned int len);
