@@ -63,7 +63,7 @@ void
 drw_font_free(Display *dpy, Fnt *font) {
 	if(!font)
 		return;
-	// TODO: XftFontClose?
+	XftFontClose(dpy, font->xfont);
 	free(font);
 }
 
