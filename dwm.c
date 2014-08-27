@@ -157,11 +157,10 @@ typedef struct {
 	int monitor;
 } Rule;
 
-typedef struct Systray   Systray;
-struct Systray {
+typedef struct {
 	Window win;
 	Client *icons;
-};
+} Systray;
 
 /* function declarations */
 static void applyrules(Client *c);
