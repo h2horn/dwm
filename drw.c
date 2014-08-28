@@ -116,7 +116,7 @@ drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int
 }
 
 void
-drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert) {
+drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text) {
 	char buf[256];
 	int i, tx, ty, th, len, olen;
 	Extnts tex;
@@ -124,7 +124,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 
 	if(!drw || !drw->scheme)
 		return;
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->fg->rgb : drw->scheme->bg->rgb);
+	XSetForeground(drw->dpy, drw->gc, drw->scheme->bg->rgb);
 	XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
 	if(!text || !drw->font)
 		return;
@@ -143,7 +143,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 		for(i = len; i && i > len - 3; buf[--i] = '.');
 
 	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
-	XftDrawStringUtf8(d, invert ? &drw->scheme->bg->xftc : &drw->scheme->fg->xftc, drw->font->xfont, tx, ty, (XftChar8 *) buf, len);
+	XftDrawStringUtf8(d, &drw->scheme->fg->xftc, drw->font->xfont, tx, ty, (XftChar8 *) buf, len);
 	XftDrawDestroy(d);
 }
 

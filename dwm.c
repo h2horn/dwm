@@ -75,7 +75,8 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeLast }; /* color schemes */
+enum { ColBorder, ColBG, ColFG, ColLast }; /* color */
+enum { SchemeNorm, SchemeSel, SchemeUrg }; /* color schemes */
 enum { NetSupported, NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation,
 	   NetWMName, NetWMState, NetWMFullscreen, NetActiveWindow, NetWMWindowType,
 	   NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -185,6 +186,7 @@ static void detachstack(Client *c);
 static Monitor *dirtomon(int dir);
 static void drawbar(Monitor *m);
 static void drawbars(void);
+static void drawcoloredtext(Drw *drw, int x, int y, unsigned int w, unsigned int h, char *text);
 static void enternotify(XEvent *e);
 static void expose(XEvent *e);
 static void focus(Client *c);
@@ -294,7 +296,6 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 static Atom wmatom[WMLast], netatom[NetLast], xatom[XLast];
 static Bool running = True;
 static Cur *cursor[CurLast];
-static ClrScheme scheme[SchemeLast];
 static Display *dpy;
 static Drw *drw;
 static Fnt *fnt;
@@ -303,6 +304,8 @@ static Window root;
 
 /* configuration, allows nested code to access above variables */
 #include "config.h"
+
+static ClrScheme scheme[NUMCOLORS];
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
@@ -495,6 +498,7 @@ void
 cleanup(void) {
 	Arg a = {.ui = ~0};
 	Layout foo = { "", NULL };
+	unsigned int i;
 	Monitor *m;
 
 	view(&a);
@@ -511,12 +515,11 @@ cleanup(void) {
 		free(systray);drw_cur_free(drw, cursor[CurMove]);
 	}
 	drw_font_free(dpy, fnt);
-	drw_clr_free(scheme[SchemeNorm].border);
-	drw_clr_free(scheme[SchemeNorm].bg);
-	drw_clr_free(scheme[SchemeNorm].fg);
-	drw_clr_free(scheme[SchemeSel].border);
-	drw_clr_free(scheme[SchemeSel].bg);
-	drw_clr_free(scheme[SchemeSel].fg);
+	for(i = 0; i < NUMCOLORS; i++) {
+		drw_clr_free(scheme[i].border);
+		drw_clr_free(scheme[i].bg);
+		drw_clr_free(scheme[i].fg);
+	}
 	drw_free(drw);
 	XSync(dpy, False);
 	XSetInputFocus(dpy, PointerRoot, RevertToPointerRoot, CurrentTime);
@@ -786,15 +789,15 @@ drawbar(Monitor *m) {
 	x = 0;
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, tags[i], urg & 1 << i);
+		drw_setscheme(drw, &scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : (urg & 1 << i ? SchemeUrg : SchemeNorm)]);
+		drw_text(drw, x, 0, w, bh, tags[i]);
 		drw_rect(drw, x, 0, w, bh, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
 		           occ & 1 << i, urg & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, &scheme[SchemeNorm]);
-	drw_text(drw, x, 0, w, bh, m->ltsymbol, 0);
+	drw_text(drw, x, 0, w, bh, m->ltsymbol);
 	x += w;
 	xx = x;
 	if(m == selmon) { /* status is only drawn on selected monitor */
@@ -807,7 +810,7 @@ drawbar(Monitor *m) {
 			x = xx;
 			w = m->ww - xx;
 		}
-		drw_text(drw, x, 0, w, bh, stext, 0);
+		drawcoloredtext(drw, x, 0, w, bh, stext);
 	}
 	else
 		x = m->ww;
@@ -815,12 +818,12 @@ drawbar(Monitor *m) {
 		x = xx;
 		if(m->sel) {
 			drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, m->sel->name, 0);
+			drw_text(drw, x, 0, w, bh, m->sel->name);
 			drw_rect(drw, x, 0, w, bh, m->sel->isfixed, m->sel->isfloating, 0);
 		}
 		else {
 			drw_setscheme(drw, &scheme[SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, NULL, 0);
+			drw_text(drw, x, 0, w, bh, NULL);
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
@@ -833,6 +836,29 @@ drawbars(void) {
 	for(m = mons; m; m = m->next)
 		drawbar(m);
 	updatesystray();
+}
+
+void
+drawcoloredtext(Drw *drw, int x, int y, unsigned int w, unsigned int h, char *text) {
+	char *buf = text, *ptr = buf, c = 1;
+	int i, tw = w, tx = x;
+
+	while(*ptr) {
+		for(i = 0; *ptr < 0 || *ptr > NUMCOLORS; i++, ptr++);
+		if(!*ptr) break;
+		c = *ptr;
+		*ptr = 0;
+		if(i) {
+			tw = selmon->ww - x;
+			drw_text(drw, tx, y, tw, h, buf);
+			tx += drw_font_getexts_width(drw, buf, i) + drw_font_getexts_width(drw, &c, 1);
+		} 
+		*ptr = c;
+		drw_setscheme(drw, &scheme[c-1]);
+		buf = ++ptr;
+	}
+	drw_setscheme(drw, &scheme[c-1]);
+	drw_text(drw, tx, y, tw, h, buf);
 }
 
 void
@@ -1660,6 +1686,7 @@ setmfact(const Arg *arg) {
 void
 setup(void) {
 	XSetWindowAttributes wa;
+	unsigned int i;
 
 	/* clean up any zombies immediately */
 	sigchld(0);
@@ -1698,12 +1725,11 @@ setup(void) {
 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
 	/* init appearance */
-	scheme[SchemeNorm].border = drw_clr_create(drw, normbordercolor);
-	scheme[SchemeNorm].bg = drw_clr_create(drw, normbgcolor);
-	scheme[SchemeNorm].fg = drw_clr_create(drw, normfgcolor);
-	scheme[SchemeSel].border = drw_clr_create(drw, selbordercolor);
-	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor);
-	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor);
+	for(i = 0; i < NUMCOLORS; i++) {
+		scheme[i].border = drw_clr_create(drw, colors[i][0]);
+		scheme[i].bg = drw_clr_create(drw, colors[i][1]);
+		scheme[i].fg = drw_clr_create(drw, colors[i][2]);
+	}
 	updatesystray();
 	/* init bars */
 	updatebars();
