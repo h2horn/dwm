@@ -883,8 +883,8 @@ drawcoloredtext(Drw *drw, int x, int y, unsigned int w, unsigned int h, char *te
 		if(i) {
 			tw = selmon->ww - x;
 			drw_text(drw, tx, y, tw, h, buf);
-			tx += drw_font_getexts_width(drw, buf, i) + drw_font_getexts_width(drw, &c, 1);
-		} 
+			tx += drw_font_getexts_width(drw, buf, i) + drw_font_getexts_width(drw, &c, 1) + 1; // FIXME loosing one pixel??
+		}
 		*ptr = c;
 		drw_setscheme(drw, &scheme[c-1]);
 		buf = ++ptr;
