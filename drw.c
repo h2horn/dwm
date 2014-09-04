@@ -116,6 +116,20 @@ drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int
 }
 
 void
+drw_underbar(Drw *drw, int x, int y, unsigned int w, unsigned int h, int active) {
+	int dy;
+
+	if(!drw || !drw->font || !drw->scheme)
+		return;
+	if(active)
+		XSetForeground(drw->dpy, drw->gc, drw->scheme->border->rgb);
+	else
+		XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->rgb);
+	dy = (drw->font->ascent + drw->font->descent + 2) / 8;
+	XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y + h - dy, w, dy);
+}
+
+void
 drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text) {
 	char buf[256];
 	int i, tx, ty, th, len, olen;

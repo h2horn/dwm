@@ -821,14 +821,16 @@ drawbar(Monitor *m) {
 	x = 0;
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, &scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : (urg & 1 << i ? SchemeUrg : SchemeNorm)]);
+		drw_setscheme(drw, &scheme[urg & 1 << i ? SchemeUrg : (occ & 1 << i ? SchemeSel : SchemeNorm)]);
 		drw_text(drw, x, 0, w, bh, tags[i]);
-		drw_rect(drw, x, 0, w, bh, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-		           occ & 1 << i, urg & 1 << i);
+		if(m->tagset[m->seltags] & 1 << i) {
+			drw_setscheme(drw, &scheme[SchemeSel]);
+			drw_underbar(drw, x, 0, w, bh, selmon && selmon->sel && selmon->sel->tags & 1 << i);
+		}
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, &scheme[SchemeNorm]);
+	drw_setscheme(drw, &scheme[SchemeSel]);
 	drw_text(drw, x, 0, w, bh, m->ltsymbol);
 	x += w;
 	xx = x;
