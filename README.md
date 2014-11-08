@@ -2,6 +2,7 @@ dwm - dynamic window manager
 ============================
 dwm is an extremely fast, small, and dynamic window manager for X.
 
+![DWM](https://raw.githubusercontent.com/cornu/dwm/master/screenshot.png)
 
 Patches
 -------
@@ -12,9 +13,11 @@ Patches
 * runorraise
 * new tag bar underline/coloring
 
+
 ToDo
 ----
 * better borders doesn't put borders on windows which were fullscreen without borders and then put in floating mode
+
 
 Requirements
 ------------
