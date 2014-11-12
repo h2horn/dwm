@@ -34,7 +34,6 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ NULL,       NULL,     "scratchpad", 0,            True,        -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       False,       -1 },
 	{ "Vlc",      NULL,       NULL,       0,            True,        -1 },
 	{ "mpv",      NULL,       NULL,       0,            True,        -1 },
 };
@@ -70,7 +69,7 @@ static const char *termcmd[]  = { "termite", "-e", "fish", NULL };
 static const char *scratchcmd[] = { "termite", "-e", "fish", "-t", "scratchpad", "--geometry", "605x122-20+30" ,NULL };
 static const char *notecmd[] = { "termite", "-e", "/home/cornu/bin/note.sh", "-t", "scratchpad", "--geometry", "605x122-20+30" ,NULL };
 static const char *filecmd[]  = { "env", "EDITOR=vim", "termite", "-e", "ranger", NULL };
-static const char *webcmd[]  = { "chromium", NULL, NULL, NULL, "Chromium" };
+static const char *webcmd[]  = { "firefox", NULL, NULL, NULL, "Firefox" };
 static const char *mediacmd[]  = { "vlc", NULL, NULL, NULL, "Vlc" };
 static const char *prtncmd[]  = { "/home/cornu/bin/scrot.sh", NULL };
 static const char *volupcmd[]  = { "/home/cornu/bin/volume.sh", "up", NULL };
