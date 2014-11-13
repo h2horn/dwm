@@ -54,7 +54,7 @@
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
-#define TEXTW(X)                (drw_font_getexts_width(drw, X, strlen(X)) + drw->font->h)
+#define TEXTW(X)                (drw_font_getexts_width(drw, X, strlen(X)))
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
 #define _NET_SYSTEM_TRAY_ORIENTATION_HORZ 0
@@ -820,7 +820,7 @@ drawbar(Monitor *m) {
 	}
 	x = 0;
 	for(i = 0; i < LENGTH(tags); i++) {
-		w = TEXTW(tags[i]);
+		w = TEXTW(tags[i]) + drw->font->h;
 		drw_setscheme(drw, &scheme[urg & 1 << i ? SchemeUrg : (occ & 1 << i ? SchemeSel : SchemeNorm)]);
 		drw_text(drw, x, 0, w, bh, tags[i]);
 		if(m->tagset[m->seltags] & 1 << i) {
@@ -829,7 +829,7 @@ drawbar(Monitor *m) {
 		}
 		x += w;
 	}
-	w = blw = TEXTW(m->ltsymbol);
+	w = blw = TEXTW(m->ltsymbol) + drw->font->h / 2;
 	drw_setscheme(drw, &scheme[SchemeSel]);
 	drw_text(drw, x, 0, w, bh, m->ltsymbol);
 	x += w;
@@ -879,20 +879,17 @@ drawcoloredtext(Drw *drw, int x, int y, unsigned int w, unsigned int h, char *te
 
 	while(*ptr) {
 		for(i = 0; *ptr < 0 || *ptr > NUMCOLORS; i++, ptr++);
-		if(!*ptr) break;
 		c = *ptr;
 		*ptr = 0;
 		if(i) {
-			tw = selmon->ww - x;
+			tw = drw_font_getexts_width(drw, buf, i) + drw_font_getexts_width(drw, &c, 1);
 			drw_text(drw, tx, y, tw, h, buf);
-			tx += drw_font_getexts_width(drw, buf, i) + drw_font_getexts_width(drw, &c, 1) + 1; // FIXME loosing one pixel??
+			tx += tw;
 		}
 		*ptr = c;
 		drw_setscheme(drw, &scheme[c-1]);
 		buf = ++ptr;
 	}
-	drw_setscheme(drw, &scheme[c-1]);
-	drw_text(drw, tx, y, tw, h, buf);
 }
 
 void

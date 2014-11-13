@@ -16,7 +16,7 @@ static const char colors[NUMCOLORS][ColLast][8] = {
 	{ "#fdf6e3", "#fdf6e3", "#2aa198" },	// cyan
 	{ "#fdf6e3", "#fdf6e3", "#859900" },	// green
 };
-static const char font[]                    = "xft:Source Code Pro:pixelsize=14";
+static const char font[]                    = "Source Code Pro Icon-10";
 static const unsigned int borderpx          = 1;        /* border pixel of windows */
 static const unsigned int snap              = 16;       /* snap pixel */
 static const unsigned int systrayspacing    = 2;        /* systray spacing */
@@ -68,8 +68,8 @@ static const char *passcmd[] = { "passmenu", "--type", "-fn", font, "-nb", color
 static const char *termcmd[]  = { "termite", "-e", "fish", NULL };
 static const char *scratchcmd[] = { "termite", "-e", "fish", "-t", "scratchpad", "--geometry", "605x122-20+30" ,NULL };
 static const char *notecmd[] = { "termite", "-e", "/home/cornu/bin/note.sh", "-t", "scratchpad", "--geometry", "605x122-20+30" ,NULL };
-static const char *filecmd[]  = { "env", "EDITOR=vim", "termite", "-e", "ranger", NULL };
-static const char *webcmd[]  = { "firefox", NULL, NULL, NULL, "Firefox" };
+static const char *filecmd[]  = { "termite", "-e", "ranger", NULL };
+static const char *webcmd[]  = { "chromium", NULL, NULL, NULL, "Chromium" };
 static const char *mediacmd[]  = { "vlc", NULL, NULL, NULL, "Vlc" };
 static const char *prtncmd[]  = { "/home/cornu/bin/scrot.sh", NULL };
 static const char *volupcmd[]  = { "/home/cornu/bin/volume.sh", "up", NULL };

@@ -97,7 +97,7 @@ drw_setfont(Drw *drw, Fnt *font) {
 
 void
 drw_setscheme(Drw *drw, ClrScheme *scheme) {
-	if(drw && scheme) 
+	if(drw && scheme)
 		drw->scheme = scheme;
 }
 
@@ -144,9 +144,6 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 		return;
 	olen = strlen(text);
 	drw_font_getexts(drw, text, olen, &tex);
-	th = drw->font->ascent + drw->font->descent;
-	ty = y + (h / 2) - (th / 2) + drw->font->ascent;
-	tx = x + (h / 2);
 	/* shorten text if necessary */
 	for(len = MIN(olen, sizeof buf); len && (tex.w > w - tex.h || w < tex.h); len--)
 		drw_font_getexts(drw, text, len, &tex);
@@ -156,6 +153,9 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
 
+	th = drw->font->ascent + drw->font->descent;
+	ty = y + (h / 2) - (th / 2) + drw->font->ascent;
+	tx = x + (w / 2) - (tex.w / 2);
 	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
 	XftDrawStringUtf8(d, &drw->scheme->fg->xftc, drw->font->xfont, tx, ty, (XftChar8 *) buf, len);
 	XftDrawDestroy(d);
