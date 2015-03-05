@@ -4,17 +4,17 @@
 #define NUMCOLORS	11	// need at least 3
 static const char colors[NUMCOLORS][ColLast][8] = {
 	// border   background  forground
-	{ "#eee8d5", "#fdf6e3", "#eee8d5" },	// 0 = normal
-	{ "#268bd2", "#fdf6e3", "#586e75" },	// 1 = selected
-	{ "#268bd2", "#dc322f", "#fdf6e3" },	// 2 = urgent/warning
-	{ "#fdf6e3", "#fdf6e3", "#b58900" },	// yellow
-	{ "#fdf6e3", "#fdf6e3", "#cb4b16" },	// orange
-	{ "#fdf6e3", "#fdf6e3", "#dc322f" },	// red
-	{ "#fdf6e3", "#fdf6e3", "#d33682" },	// magenta
-	{ "#fdf6e3", "#fdf6e3", "#6c71c4" },	// violet
-	{ "#fdf6e3", "#fdf6e3", "#268bd2" },	// blue
-	{ "#fdf6e3", "#fdf6e3", "#2aa198" },	// cyan
-	{ "#fdf6e3", "#fdf6e3", "#859900" },	// green
+	{ "#2e3436", "#000000", "#2e3436" },	// 0 = normal
+	{ "#d3d7cf", "#000000", "#ffffff" },	// 1 = selected
+	{ "#d3d7cf", "#a31604", "#000000" },	// 2 = urgent/warning
+	{ "#000000", "#000000", "#555753" },	// black
+	{ "#000000", "#000000", "#c60001" },	// red
+	{ "#000000", "#000000", "#27a343" },	// green
+	{ "#000000", "#000000", "#d5a30e" },	// yellow
+	{ "#000000", "#000000", "#0f75bd" },	// blue
+	{ "#000000", "#000000", "#893c8c" },	// magenta
+	{ "#000000", "#000000", "#12bccb" },	// cyan
+	{ "#000000", "#000000", "#d3d7cf" },	// white
 };
 static const char font[]                    = "Source Code Pro Icon-10";
 static const unsigned int borderpx          = 1;        /* border pixel of windows */
@@ -72,6 +72,7 @@ static const char *filecmd[]  = { "termite", "-e", "ranger", NULL };
 static const char *webcmd[]  = { "chromium", NULL, NULL, NULL, "Chromium" };
 static const char *mediacmd[]  = { "vlc", NULL, NULL, NULL, "Vlc" };
 static const char *prtncmd[]  = { "/home/cornu/bin/scrot.sh", NULL };
+static const char *wificmd[]  = { "/home/cornu/bin/wifi.sh", NULL };
 static const char *volupcmd[]  = { "/home/cornu/bin/volume.sh", "up", NULL };
 static const char *voldowncmd[]  = { "/home/cornu/bin/volume.sh", "down", NULL };
 static const char *volmutecmd[]  = { "/home/cornu/bin/volume.sh", "mute", NULL };
@@ -87,6 +88,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_w,           runorraise,     {.v = webcmd } },
 	{ MODKEY,                       XK_v,           runorraise,     {.v = mediacmd } },
 	{ 0,                            XK_Print,       spawn,          {.v = prtncmd } },
+	{ 0,                            XK_XF86Battery, spawn,          {.v = wificmd } },
 	{ 0,                            0x1008ff13,     spawn,          {.v = volupcmd } },
 	{ 0,                            0x1008ff12,     spawn,          {.v = volmutecmd } },
 	{ 0,                            0x1008ff11,     spawn,          {.v = voldowncmd } },
