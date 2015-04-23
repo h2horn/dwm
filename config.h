@@ -1,4 +1,5 @@
 /* See LICENSE file for copyright and license details. */
+#include "X11/XF86keysym.h"
 
 /* appearance */
 #define NUMCOLORS	11	// need at least 3
@@ -88,7 +89,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_w,           runorraise,     {.v = webcmd } },
 	{ MODKEY,                       XK_v,           runorraise,     {.v = mediacmd } },
 	{ 0,                            XK_Print,       spawn,          {.v = prtncmd } },
-	{ 0,                            XK_XF86Battery, spawn,          {.v = wificmd } },
+	{ 0,                            XF86XK_Battery, spawn,          {.v = wificmd } },
 	{ 0,                            0x1008ff13,     spawn,          {.v = volupcmd } },
 	{ 0,                            0x1008ff12,     spawn,          {.v = volmutecmd } },
 	{ 0,                            0x1008ff11,     spawn,          {.v = voldowncmd } },
